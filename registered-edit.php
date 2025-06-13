@@ -66,7 +66,7 @@ if(mysqli_num_rows($query_run) > 0)
   foreach($query_run as $row)
   {
     ?>
-<input type="hidden" name="user_id" value="<?php echo $row['id'] ?>">
+<input type="text" name="" value="<?php echo $row['id'] ?>">
 <div class="form-group">
           <label for="">Name</label>
           <input type="text" name="name" value="<?php echo $row['name'] ?>" class="form-control" placeholder="Name">

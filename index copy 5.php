@@ -1,12 +1,54 @@
 <?php
+session_start();
 include('includes/header.php');
 include('includes/topbar.php');
 include('includes/sidebar.php');
+include('config/dbcon.php');
 ?>
  <!-- Content Wrapper. Contains page content -->
  <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <div class="content-header">
+
+<!-- User Modal -->
+<div class="modal fade" id="AdduserModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Add User</h1>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+  <span aria-hidden="true">&times;</span>
+</button>
+</div>
+<form action="code.php" method="POST">
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="">Name</label>
+          <input type="text" name="name" class="form-control" placeholder="Name">
+      </div>
+    
+      <div class="form-group">
+          <label for="">Phone Number</label>
+          <input type="text" name="phone" class="form-control" placeholder="Phone Number">
+      </div>
+      <div class="form-group">
+          <label for="">Email Id</label>
+          <input type="email" name="email" class="form-control" placeholder="Email Id">
+      </div>
+      <div class="form-group">
+          <label for="">Password</label>
+          <input type="password" name="password" class="form-control" placeholder="Password">
+      </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" name="addUser" class="btn btn-primary">Save</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+   <!-- Content Header (Page header) -->
+   <div class="content-header">
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
@@ -15,86 +57,92 @@ include('includes/sidebar.php');
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">Dashboard v1</li>
+              <li class="breadcrumb-item active">Registered Users</li>
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
     </div>
     <!-- /.content-header -->
+ <!-- /.card -->
 
+ <section class="content">
+ <div class="container">
+<div class="row">
+    <div class="col-md-12">
+<?php
+if(isset($_SESSION['status']))
+{
+  echo "<h4>" .$_SESSION['status']."</h4>";
+  unset($_SESSION['status']);
+}
 
-        <!-- Main content -->
-        <section class="content">
-      <div class="container-fluid">
-        <!-- Small boxes (Stat box) -->
-        <div class="row">
-          <div class="col-lg-3 col-6">
-            <!-- small box -->
-            <div class="small-box bg-info">
-              <div class="inner">
-                <h3>150</h3>
+?>
+             <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Registered Users</h3>
+                <a href="#" data-toggle="modal" data-target="#AdduserModal" class="btn btn-primary float-sm-right">Add user</a>
 
-                <p>New Orders</p>
               </div>
-              <div class="icon">
-                <i class="ion ion-bag"></i>
-              </div>
-              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-            </div>
-          </div>
-          <!-- ./col -->
-          <div class="col-lg-3 col-6">
-            <!-- small box -->
-            <div class="small-box bg-success">
-              <div class="inner">
-                <h3>53<sup style="font-size: 20px">%</sup></h3>
+              
+              <!-- /.card-header -->
 
-                <p>Bounce Rate</p>
-              </div>
-              <div class="icon">
-                <i class="ion ion-stats-bars"></i>
-              </div>
-              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-            </div>
-          </div>
-          <!-- ./col -->
-          <div class="col-lg-3 col-6">
-            <!-- small box -->
-            <div class="small-box bg-warning">
-              <div class="inner">
-                <h3>44</h3>
+              <div class="card-body">
+                <table id="example1" class="table table-bordered table-striped">
+                  <thead>
+                  <tr>
+                  <th>Id</th>
+                    <th>Name</th>
+                    <th>Phone Number</th>
+                    <th>Email</th>
+                    <th>Action</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <?php
+$query = "SELECT * FROM users";
+$query_run = mysqli_query($con, $query);
 
-                <p>User Registrations</p>
-              </div>
-              <div class="icon">
-                <i class="ion ion-person-add"></i>
-              </div>
-              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-            </div>
-          </div>
-          <!-- ./col -->
-          <div class="col-lg-3 col-6">
-            <!-- small box -->
-            <div class="small-box bg-danger">
-              <div class="inner">
-                <h3>65</h3>
-
-                <p>Unique Visitors</p>
-              </div>
-              <div class="icon">
-                <i class="ion ion-pie-graph"></i>
-              </div>
-              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-            </div>
-          </div>
-          <!-- ./col -->
-        </div>
-        <!-- /.row -->
-        </div><!-- /.container-fluid -->
-        </section>
+if(mysqli_num_rows($query_run) > 0)
+{
+foreach($query_run as $row)
+{
+?>
+ <tr>
+                    <td><?php echo $row['id']; ?></td>
+                    <td><?php echo $row['name']; ?></td>
+                    <td><?php echo $row['phone']; ?></td>
+                    <td><?php echo $row['email']; ?></td>
+                   <td>
+                    <a href="registered-edit.php?user_id=<?php echo $row['id']; ?>" class="btn btn-info">Edit</a>
+                    <a href="" class="btn btn-danger">Delete</a>
+                   </td>
+                   
+                  </tr>
+<?php
+ }
+}
+else
+{
+  ?>
+  <tr>
+    <td>No Record Found</td>
+  </tr>
+  <?php
+}
+?>
+                  </tr>
+                  </tbody>
+                  </table>
 </div>
- 
+</div>
+</div>
+</div>
+</div>
+</section>
+ </div>
+
+
 <?php
 include('includes/footer.php');
 ?>

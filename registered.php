@@ -4,6 +4,30 @@ include('includes/header.php');
 include('includes/topbar.php');
 include('includes/sidebar.php');
 include('config/dbcon.php');
+
+// Handle external HTML form registration
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['external_user'])) {
+    $name = mysqli_real_escape_string($con, $_POST['name']);
+    $phone = mysqli_real_escape_string($con, $_POST['phone']);
+    $email = mysqli_real_escape_string($con, $_POST['email']);
+    $password = ''; // Can be generated if needed
+
+    $check_query = "SELECT * FROM users WHERE email = '$email' OR phone = '$phone'";
+    $check_result = mysqli_query($con, $check_query);
+
+    if (mysqli_num_rows($check_result) > 0) {
+        $_SESSION['status'] = "User already registered.";
+    } else {
+        $insert_query = "INSERT INTO users (name, phone, email, password) VALUES ('$name', '$phone', '$email', '$password')";
+        if (mysqli_query($con, $insert_query)) {
+            $_SESSION['status'] = "User registered successfully from external form.";
+        } else {
+            $_SESSION['status'] = "Something went wrong during registration.";
+        }
+    }
+    header("Location: registered.php");
+    exit();
+}
 ?>
  <!-- Content Wrapper. Contains page content -->
  <div class="content-wrapper">
@@ -117,7 +141,7 @@ foreach($query_run as $row)
                     <a href="registered-edit.php?user_id=<?php echo $row['id']; ?>" class="btn btn-info">Edit</a>
                     <a href="" class="btn btn-danger">Delete</a>
                    </td>
-                   
+                  
                   </tr>
 <?php
  }
